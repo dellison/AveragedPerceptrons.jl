@@ -20,7 +20,7 @@ end
 
 const Wt{T} = AveragedWeight{T}
 
-AveragedWeight{T}() where T = AveragedWeight{T}(zero(T), 0, zero(T))
+AveragedWeight{T}(w=zero(T),t=0) where T = AveragedWeight{T}(w, t, zero(w))
 AveragedWeight(T::Type{<:Number}; w=0, t=0) = AveragedWeight{T}(w,0,zero(T))
 AveragedWeight(w=0, t=0) = AveragedWeight(w, t, zero(w))
 
