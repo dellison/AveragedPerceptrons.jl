@@ -1,7 +1,7 @@
 module AveragedPerceptrons
 
-export Perceptron, SparsePerceptron
-export AveragedPerceptron, SparseAveragedPerceptron
+export Perceptron, SparsePerceptron, DictPerceptron
+export AveragedPerceptron, SparseAveragedPerceptron, DictAveragedPerceptron
 export MulticlassPerceptron, SparseMulticlassPerceptron
 export MulticlassAveragedPerceptron, SparseMulticlassAveragedPerceptron
 

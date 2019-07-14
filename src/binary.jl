@@ -10,11 +10,15 @@ end
 
 Perceptron(nfeats::Int) = Perceptron(zeros(Int,nfeats), 0)
 Perceptron(w::AbstractVector) = Perceptron(w, zero(eltype(w)))
+Perceptron(w::Dict{T,N}) where {T,N<:Number} = Perceptron(w,zero(N))
 
 @percep Perceptron
 
 predict(p::Perceptron, x) = score(p, x) > 0
-score(p::Perceptron,   x) = dot(p.w, x) + p.b
+
+score(p::Perceptron, x) = dot(p.w, x) + p.b
+score(p::Perceptron{Dict,T}, x::Dict) where T = sum(get(p.w, k, zero(T)) * x[k]) + p.b
+score(p::Perceptron{D,T}, x) where {D<:Dict,T} = sum(get(p.w, k, zero(T)) for k in x) + p.b
 
 function fit_one!(p::Perceptron, x, y::Bool, r=1)
     ŷ = predict(p, x)
@@ -47,6 +51,38 @@ SparsePerceptron(nfeatures::Int) =
     SparsePerceptron{Int}(nfeatures)
 
 """
+    DictPerceptron
+
+Averaged perceptron with a Dict representing weights.
+"""
+const DictPerceptron{F,V} = Perceptron{Dict{F,V},V}
+
+"""
+    DictPerceptron()
+
+todo
+"""
+DictPerceptron() = Perceptron(Dict{Any,Float64}(),zero(Float64))
+
+function update!(p::DictPerceptron, x, y::Bool, r=1)
+    !y && (r *=-1)
+    p.b += r
+    for k in x
+        p.w[k] = get(p.w, k, 0) + r
+    end
+    p
+end
+function update!(p::DictPerceptron, x::Dict, y::Bool, r=1)
+    !y && (r *=-1)
+    p.b += r
+    for (k,v) in x
+        p.w[k] = get(p.w, k, 0) + v*r
+    end
+    p
+end
+
+
+"""
     AveragedPerceptron
 
 Binary averaged perceptron.
@@ -72,7 +108,7 @@ function fit_one!(p::AveragedPerceptron, x, y, r=1)
     fit_one!(p.p, x, y, r)
 end
 
-update!(p::AveragedPerceptron, x, y::Bool, r=1) = update(p.p, x, y, r)
+update!(p::AveragedPerceptron, x, y::Bool, r=1) = update!(p.p, x, y, r)
 
 function average!(p::AveragedPerceptron)
     for w in param, param in (p.w, p.b)
@@ -94,3 +130,25 @@ function SparseAveragedPerceptron{T}(nfeatures::Int) where T
 end
 SparseAveragedPerceptron(nfeatures::Int) =
     SparseAveragedPerceptron{Int}(nfeatures)
+
+"""
+   DictAveragedPerceptron
+
+todo
+"""
+const DictAveragedPerceptron{F,V} = AveragedPerceptron{Dict{F,V},V}
+
+"""
+    DictAveragedPerceptron()
+
+todo
+"""
+DictAveragedPerceptron() = DictAveragedPerceptron(Dict{Any,Number}(),0)
+
+"""
+    DictAveragedPerceptron{K,V}()
+
+todo
+"""
+DictAveragedPerceptron{K,V}() where {K,V<:Number} =
+    DictAveragedPerceptron(Dict{K,V}(),0)

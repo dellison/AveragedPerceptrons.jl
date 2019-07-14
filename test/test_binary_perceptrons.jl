@@ -35,5 +35,11 @@ end
     p = SparsePerceptron(5)
 
     p = SparseAveragedPerceptron(5)
+end
 
+@testset "Dict Perceptrons" begin
+    p = DictPerceptron()
+    x = ["words","in","a","document"]
+    @test score(p, x) == 0
+    update!(p, x, true)
 end
