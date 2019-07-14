@@ -42,4 +42,10 @@ end
     x = ["words","in","a","document"]
     @test score(p, x) == 0
     update!(p, x, true)
+
+    p = DictAveragedPerceptron()
+    x = ["words","in","a","document"]
+    @test score(p, x) == 0
+    update!(p, x, true)
+    @test AveragedPerceptrons.predict(p, x)
 end

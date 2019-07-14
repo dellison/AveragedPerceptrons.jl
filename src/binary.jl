@@ -64,19 +64,19 @@ todo
 """
 DictPerceptron() = Perceptron(Dict{Any,Float64}(),zero(Float64))
 
-function update!(p::DictPerceptron, x, y::Bool, r=1)
+function update!(p::DictPerceptron{K,V}, x, y::Bool, r=1) where {K,V}
     !y && (r *=-1)
     p.b += r
     for k in x
-        p.w[k] = get(p.w, k, 0) + r
+        p.w[k] = get(p.w, k, zero(V)) + r
     end
     p
 end
-function update!(p::DictPerceptron, x::Dict, y::Bool, r=1)
+function update!(p::DictPerceptron{K,V}, x::Dict, y::Bool, r=1) where {K,V}
     !y && (r *=-1)
     p.b += r
     for (k,v) in x
-        p.w[k] = get(p.w, k, 0) + v*r
+        p.w[k] = get(p.w, k, zero(V)) + v*r
     end
     p
 end
@@ -143,7 +143,12 @@ const DictAveragedPerceptron{F,V} = AveragedPerceptron{Dict{F,V},V}
 
 todo
 """
-DictAveragedPerceptron() = DictAveragedPerceptron(Dict{Any,Number}(),0)
+function DictAveragedPerceptron()
+    w = Dict{Any,AveragedWeight{Float64}}()
+    b = AveragedWeight(Float64)
+    # {typeof(w),typeof(b)}
+    return AveragedPerceptron(0, Perceptron(w, b))
+end
 
 """
     DictAveragedPerceptron{K,V}()
@@ -151,4 +156,4 @@ DictAveragedPerceptron() = DictAveragedPerceptron(Dict{Any,Number}(),0)
 todo
 """
 DictAveragedPerceptron{K,V}() where {K,V<:Number} =
-    DictAveragedPerceptron(Dict{K,V}(),0)
+    AveragedPerceptron{Dict{K,V},V}(Dict{K,V}(),zero(V))

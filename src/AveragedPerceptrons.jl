@@ -1,9 +1,10 @@
 module AveragedPerceptrons
 
-export Perceptron, SparsePerceptron, DictPerceptron
-export AveragedPerceptron, SparseAveragedPerceptron, DictAveragedPerceptron
-export MulticlassPerceptron, SparseMulticlassPerceptron
-export MulticlassAveragedPerceptron, SparseMulticlassAveragedPerceptron
+export Perceptron, DictPerceptron, SparsePerceptron
+export AveragedPerceptron, DictAveragedPerceptron, SparseAveragedPerceptron
+export MulticlassPerceptron, DictAveragedPerceptron, SparseMulticlassPerceptron
+export MulticlassAveragedPerceptron, DictMulticlassAveragedPerceptron,
+    SparseMulticlassAveragedPerceptron
 
 using LinearAlgebra, SparseArrays
 
